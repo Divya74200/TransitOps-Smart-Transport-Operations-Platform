@@ -1,5 +1,0 @@
-PORT=5000
-
-MONGO_URI=MONGO_URI=mongodb+srv://ayushi2428cseai1535_db_user:NF1YPI8TCgTXBnSA@cluster0.g9chp3f.mongodb.net/transitops?retryWrites=true&w=majority&appName=Cluster0
-
-JWT_SECRET=TransitOps@123
