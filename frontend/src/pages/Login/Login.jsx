@@ -1,157 +1,149 @@
 import { useState } from "react";
-import { Eye, EyeOff, Truck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Lock, Mail, UserCog } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [password, setPassword] = useState("");
 
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const [role, setRole] = useState("Fleet Manager");
 
   const handleLogin = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (
-      formData.email === "admin@transit.com" &&
-      formData.password === "password123"
-    ) {
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/dashboard");
-    } else {
-      setError("Invalid email or password");
-    }
-  };
+  const users =
+    JSON.parse(localStorage.getItem("users")) || [];
+
+  const user = users.find(
+    (u) =>
+      u.email === email &&
+      u.password === password &&
+      u.role === role
+  );
+
+  if (!user) {
+    alert("Invalid credentials");
+    return;
+  }
+
+  localStorage.setItem("isLoggedIn", "true");
+  localStorage.setItem("email", user.email);
+  localStorage.setItem("role", user.role);
+  localStorage.setItem("name", user.name);
+
+  navigate("/dashboard", {
+  replace: true,
+});
+};
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen items-center justify-center bg-slate-100">
 
-      {/* Left */}
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
 
-      <div className="hidden lg:flex w-1/2 bg-blue-600 text-white items-center justify-center">
+        <h1 className="mb-2 text-center text-4xl font-bold text-blue-600">
+          TransitOps
+        </h1>
 
-        <div className="text-center px-12">
-
-          <Truck size={70} className="mx-auto mb-6" />
-
-          <h1 className="text-5xl font-bold">
-            TransitOps
-          </h1>
-
-          <p className="mt-5 text-lg text-blue-100">
-            Smart Transport Operations Platform
-          </p>
-
-        </div>
-
-      </div>
-
-      {/* Right */}
-
-      <div className="flex w-full lg:w-1/2 items-center justify-center bg-gray-100">
+        <p className="mb-8 text-center text-gray-500">
+          Smart Transport Operations Platform
+        </p>
 
         <form
           onSubmit={handleLogin}
-          className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg"
+          className="space-y-5"
         >
 
-          <h2 className="mb-2 text-3xl font-bold">
-            Welcome Back
-          </h2>
+          {/* Email */}
 
-          <p className="mb-8 text-gray-500">
-            Login to continue
-          </p>
+          <div className="relative">
 
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-600">
-              {error}
-            </div>
-          )}
-
-          <div className="mb-5">
-
-            <label className="mb-2 block font-medium">
-              Email
-            </label>
+            <Mail
+              className="absolute left-3 top-3 text-gray-400"
+              size={20}
+            />
 
             <input
               type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="admin@transit.com"
-              className="w-full rounded-lg border p-3 outline-none focus:border-blue-600"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+              className="w-full rounded-lg border py-3 pl-10 pr-3"
             />
 
           </div>
 
-          <div className="mb-6">
+          {/* Password */}
 
-            <label className="mb-2 block font-medium">
-              Password
-            </label>
+          <div className="relative">
 
-            <div className="relative">
+            <Lock
+              className="absolute left-3 top-3 text-gray-400"
+              size={20}
+            />
 
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                className="w-full rounded-lg border p-3 pr-12 outline-none focus:border-blue-600"
-              />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              className="w-full rounded-lg border py-3 pl-10 pr-3"
+            />
 
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3"
-              >
-                {showPassword ? (
-                  <EyeOff size={20} />
-                ) : (
-                  <Eye size={20} />
-                )}
-              </button>
+          </div>
 
-            </div>
+          {/* Role */}
+
+          <div className="relative">
+
+            <UserCog
+              className="absolute left-3 top-3 text-gray-400"
+              size={20}
+            />
+
+            <select
+              value={role}
+              onChange={(e) =>
+                setRole(e.target.value)
+              }
+              className="w-full rounded-lg border py-3 pl-10 pr-3"
+            >
+              <option>Fleet Manager</option>
+              <option>Driver</option>
+              <option>Safety Officer</option>
+              <option>Financial Analyst</option>
+            </select>
 
           </div>
 
           <button
-            className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700"
+            type="submit"
+            className="w-full rounded-lg bg-blue-600 py-3 text-white transition hover:bg-blue-700"
           >
             Login
           </button>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
-
-            Demo Credentials
-
-            <br />
-
-            admin@transit.com
-
-            <br />
-
-            password123
-
-          </div>
-
         </form>
+        
+        <p className="mt-6 text-center">
+
+  Don't have an account?
+
+  <Link
+    to="/signup"
+    className="ml-2 font-semibold text-blue-600"
+  >
+    Sign Up
+  </Link>
+
+</p>
 
       </div>
 
